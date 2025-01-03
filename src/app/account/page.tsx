@@ -35,9 +35,9 @@ const page = () => {
   }, [user]);
   return (
     <div>
-      <div className="mx-auto max-w-7xl mt-20   max-2xl:px-5 ">
+      <div className="mx-auto max-w-7xl mt-24   max-2xl:px-5 ">
         <div className="flex gap-10 mb-20 pt-10 max-md:flex-col     ">
-          <div className="account-nav max-md:hidden   h-full bg-gray-200 p-10 rounded-md">
+          <div className="account-nav max-md:hidden    h-full bg-gray-100 p-10 rounded-md">
             <img
               src="/blog.png"
               alt="Avatart"
@@ -197,7 +197,7 @@ const page = () => {
               )}
             </div>
           </div>
-          <div className="w-full">
+          <div className="w-full customScroll max-h-[80vh] overflow-auto">
             <h1 className="pb-10   text-3xl font-medium">My Account</h1>
             {activebtn === 0 && <Details />}
             {activebtn === 1 && <Orders />}

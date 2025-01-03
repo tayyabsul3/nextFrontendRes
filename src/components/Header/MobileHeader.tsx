@@ -172,7 +172,7 @@ const MobileHeader = () => {
                             <div className="flex flex-col gap-2 w-full">
                               <div className="flex justify-between font-bold w-full">
                                 <h2 className=" ">{item.title}</h2>
-                                <p>${item.price * item.quantity}</p>
+                                <p>Rs{item.price * item.quantity}</p>
                               </div>
                               <div className="flex justify-between  w-full">
                                 <h2 className=" ">Color : Black</h2>
@@ -221,11 +221,11 @@ const MobileHeader = () => {
                     <div className="total py-2 space-y-2  ">
                       <div className="sub flex justify-between text-sm ">
                         <h1>Subtotal</h1>
-                        <p>${CalculateSubTotalPrice()}</p>
+                        <p>Rs{CalculateSubTotalPrice()}</p>
                       </div>
                       <div className=" flex justify-between border-t text-lg font-medium ">
                         <h1>Total</h1>
-                        <p>${CalculateTotalPrice().toFixed(2)}</p>
+                        <p>Rs{CalculateTotalPrice().toFixed(2)}</p>
                       </div>
                       <Link href={"/cart"}>
                         <button

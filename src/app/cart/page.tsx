@@ -248,7 +248,7 @@ const page = () => {
               key={i}
               className={
                 activeOption === i
-                  ? "flex gap-5 items-center border-b-2 border-black p-5"
+                  ? "flex gap-5 items-center border-b-2 border-yellow-400 p-5"
                   : completed.includes(i)
                   ? "flex gap-5 items-center p-5 text-green-400"
                   : "flex gap-5 items-center p-5"
@@ -257,7 +257,7 @@ const page = () => {
               <span
                 className={
                   activeOption === i
-                    ? "w-16 h-16 text-xl flex justify-center items-center bg-black text-white rounded-full"
+                    ? "w-16 h-16 text-xl flex justify-center items-center bg-yellow-400 text-white rounded-full"
                     : completed.includes(i)
                     ? "w-16 h-16 text-xl flex justify-center items-center bg-green-100 text-green-400 rounded-full"
                     : "w-16 h-16 text-xl flex justify-center items-center bg-gray-100 text-gray-400 rounded-full"
@@ -296,7 +296,7 @@ const page = () => {
                 ))}
               </div>
             </div>
-            <div className="card xl:m-10 mb-10  border-2 flex flex-col shadow-sm xl:min-w-[500px] gap-5 rounded-lg  border-black  p-5  md:p-10 h-fit">
+            <div className="card xl:m-10 mb-10  border-2 flex flex-col shadow-sm xl:min-w-[500px] gap-5 rounded-lg   p-5  md:p-10 h-fit border-yellow-400  hover:shadow-sm bg-gray-50  ">
               <h1 className="font-semibold text-lg md:text-2xl">
                 Cart summary
               </h1>
@@ -304,7 +304,7 @@ const page = () => {
                 {shippingOptions.map((option) => (
                   <div
                     key={option.id}
-                    className={`option flex justify-between px-2 md:px-5 md:py-3 p-2 md:text-lg gap-5 border rounded-md ${
+                    className={`option flex justify-between px-2 md:px-5 md:py-3 p-2 md:text-lg gap-5 border rounded-md RS {
                       selectedOption === option.id ? "bg-gray-100" : "bg-white"
                     }`}
                   >
@@ -313,24 +313,24 @@ const page = () => {
                         type="radio"
                         name="option"
                         id={option.id}
-                        className="accent-black scale-110 rounded-full"
+                        className="accent-yellow-400 scale-110 rounded-full"
                         checked={selectedOption === option.id}
                         onChange={() => handleRadioChange(option.id)}
                       />
                       <h2>{option.label}</h2>
                     </div>
-                    <p>${option.price.toFixed(2)}</p>
+                    <p>RS {option.price.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
               <div className="amount space-y-2">
                 <div className="subtotal flex justify-between  border-b pb-5">
                   <p>Subtotal</p>
-                  <p>${CalculateSubTotalPrice()}</p>
+                  <p>RS {CalculateSubTotalPrice()}</p>
                 </div>
                 <div className="total font-medium text-lg flex justify-between ">
                   <p>Total</p>
-                  <p>${CalculateTotalPrice()}</p>
+                  <p>RS {CalculateTotalPrice()}</p>
                 </div>
               </div>
               <button
@@ -346,7 +346,7 @@ const page = () => {
                     });
                   }
                 }}
-                className="bg-black   text-white  p-3   opacity-100  transition-all duration-300 w-full  rounded-md hover:bg-black/90 px-5"
+                className="hover:bg-red-500 bg-yellow-400   text-white  p-3   opacity-100  transition-all duration-300 w-full  rounded-md px-5"
               >
                 Checkout
               </button>
@@ -459,7 +459,7 @@ const page = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className="bg-black text-white p-3 opacity-100 transition-all duration-300 w-full rounded-md hover:bg-black/90 px-5"
+                className="hover:bg-red-500 bg-yellow-400  text-white p-3 opacity-100 transition-all duration-300 w-full rounded-md hover:bg-black/90 px-5"
               >
                 Place Order
               </button>
@@ -476,7 +476,7 @@ const page = () => {
                       <div className="flex justify-between font-bold w-full">
                         <h2 className=" ">{cartItem.title}</h2>
                         <p>
-                          ${(cartItem.price * cartItem.quantity).toFixed(2)}
+                          RS {(cartItem.price * cartItem.quantity).toFixed(2)}
                         </p>
                       </div>
                       <div className="flex justify-between  w-full">
@@ -520,7 +520,7 @@ const page = () => {
                   className=" border w-full  rounded-md p-2"
                   placeholder="Input"
                 />
-                <button className="bg-black   text-white  p-3   opacity-100  transition-all duration-300 w-fit  rounded-md hover:bg-black/90 px-5">
+                <button className="hover:bg-red-500 bg-yellow-400   text-white  p-3   opacity-100  transition-all duration-300 w-fit  rounded-md  px-5">
                   Apply
                 </button>
               </div>
@@ -533,18 +533,18 @@ const page = () => {
                 </div>
                 <div className="subtotal flex justify-between  border-b pb-3">
                   <p>Subtotal</p>
-                  <p className="font-semibold">${CalculateSubTotalPrice()}</p>
+                  <p className="font-semibold">RS {CalculateSubTotalPrice()}</p>
                 </div>
                 <div className="total font-medium text-lg flex justify-between ">
                   <p>Total</p>
-                  <p>${CalculateTotalPrice()}</p>
+                  <p>RS {CalculateTotalPrice()}</p>
                 </div>
               </div>
             </div>
           </div>
         ) : (
           <div className="p-20 shadow-2xl flex-col gap-2 flex justify-center items-center m-20 max-w-5xl mx-auto">
-            <h1>Your have to pay ${CalculateTotalPrice()}</h1>
+            <h1>Your have to pay RS {CalculateTotalPrice()}</h1>
             <Elements
               stripe={stripPromise}
               options={{

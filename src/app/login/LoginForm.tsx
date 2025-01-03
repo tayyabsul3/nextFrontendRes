@@ -27,7 +27,6 @@ const LoginForm = () => {
   const [forgotPassword, setforgotPassword] = useState(false);
 
   const handleSubmit = async () => {
-    
     if (!formData.usernameOrEmail || !formData.password) {
       setErrorMessage("Please enter both your username/email and password.");
       return;
@@ -78,12 +77,11 @@ const LoginForm = () => {
   };
 
   return (
-    <>
+    <div className="w-full bg-white">
       {!forgotPassword ? (
-        <div className=" p-10 w-full   ">
-          
+        <div className=" p-10 w-full  bg-white   ">
           <h2 className="text-3xl font-semibold mb-4">Login</h2>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-400 mb-6 ">
             Don't have an account yet?{" "}
             <Link href="/register" className="text-emerald-500 font-bold">
               Register
@@ -95,7 +93,7 @@ const LoginForm = () => {
               type="email"
               name="usernameOrEmail"
               placeholder="Your username or email address"
-              className="outline-none border-b pl-0 p-3  w-full"
+              className="outline-none border-b bg-transparent pl-0 p-3  w-full"
               value={formData.usernameOrEmail}
               onChange={handleChange}
             />
@@ -105,7 +103,7 @@ const LoginForm = () => {
                 type={formData.showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
-                className="outline-none border-b pl-0 p-3  w-full"
+                className="outline-none border-b bg-transparent pl-0 p-3  w-full"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -166,7 +164,7 @@ const LoginForm = () => {
       ) : (
         <Forgotpassword />
       )}
-    </>
+    </div>
   );
 };
 

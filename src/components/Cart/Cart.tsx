@@ -47,10 +47,10 @@ const Cart = ({ item }: { item: Product }) => {
         </div>
       </div>
       <div className="col3 max-md:hidden">
-        <p>${item.price}</p>
+        <p>Rs {item.price}</p>
       </div>
       <div className="col4 max-md:hidden font-semibold text-lg">
-        <h1>${(item.price * item.quantity).toFixed(2)}</h1>
+        <h1>Rs {(item.price * item.quantity).toFixed(2)}</h1>
       </div>
     </div>
   );

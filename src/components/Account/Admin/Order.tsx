@@ -133,7 +133,7 @@ const Order = () => {
                       </p>
                     </td>
                     <td className="border-gray-400 text-sm">
-                      ${order.totalPrice}
+                      Rs {order.totalPrice}
                     </td>
                     <td className="border-gray-400 text-sm">
                       <button

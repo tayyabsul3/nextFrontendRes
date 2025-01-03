@@ -74,7 +74,7 @@ const Wishlist = () => {
                   </div>
                 </TableCell>
                 <TableCell className="border-gray-400 text-sm">
-                  ${item.price.toFixed(2)}
+                  Rs {item.price.toFixed(2)}
                 </TableCell>
                 <TableCell className="border-gray-400 text-sm">
                   <button

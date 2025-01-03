@@ -183,7 +183,9 @@ const Cart = () => {
             </p>
           </div>
           <Link href={"/cart"}>
-            <button className=" bg-red-600 text-sm w-full py-2 px-2  md:px-3 font-bold md:py-3 rounded-sm  text-white hover:bg-yellow-400 hover:text-black mt-1 mb-1  ">
+            <button  onClick={() => {
+              dispatch(toogleShowCart({}));
+            }} className=" bg-red-600 text-sm w-full py-2 px-2  md:px-3 font-bold md:py-3 rounded-sm  text-white hover:bg-yellow-400 hover:text-black mt-1 mb-1  ">
               Checkout
             </button>
           </Link>

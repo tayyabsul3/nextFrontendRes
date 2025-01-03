@@ -89,7 +89,7 @@ const ProductCard = ({ tag, product }: Props) => {
 
         <h3>{product.title} </h3>
         <p>{product.category}</p>
-        <p>${product.price}</p>
+        <p>Rs {product.price}</p>
       </div>
       <Link href={`/products/${product._id}`}>
         <button className="border-black border   text-black p-2  hover:bg-black/5  transition-all duration-300 w-full mt-2 rounded-md">

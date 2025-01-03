@@ -12,7 +12,7 @@ const OrderRow = () => {
           <h1 className="text-gray-500 flex-[0.25] ">{item.orderDate}</h1>
           <h1 className="text-gray-500 flex-[0.25] ">{item.orderStatus}</h1>
           <h1 className="text-gray-500 flex-[0.25] ">
-            ${item.orderSummary.totalAmount}
+            Rs {item.orderSummary.totalAmount}
           </h1>
         </div>
       ))}

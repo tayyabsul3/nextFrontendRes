@@ -86,9 +86,10 @@ const ProductDetails = ({ data: apidata }: any) => {
               <h1 className="text-4xl font-medium">{data.title}</h1>
               <p>{data.description}</p>
               <div className="price flex gap-2 items-center">
-                <h1 className="font-medium text-2xl ">${data.price}</h1>
+                <h1 className="font-medium text-2xl ">Rs {data.price}</h1>
                 <p className="font-medium line-through text-gray-400 text-lg">
-                  ${calculateOriginalPrice(data.price, data.discountPercentage)}
+                  Rs{" "}
+                  {calculateOriginalPrice(data.price, data.discountPercentage)}
                 </p>
               </div>
             </div>

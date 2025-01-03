@@ -100,7 +100,7 @@ const Orders = () => {
                         </p>
                       </TableCell>
                       <TableCell className="border-gray-400 text-sm">
-                        ${order.totalPrice.toFixed(2)}
+                        Rs{order.totalPrice.toFixed(2)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -141,7 +141,7 @@ const Orders = () => {
                     </p>
                   </div>
                   <p className="mt-4 font-semibold text-lg">
-                    ${order.totalPrice.toFixed(2)}
+                    Rs {order.totalPrice.toFixed(2)}
                   </p>
                 </div>
               ))}
