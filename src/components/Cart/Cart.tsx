@@ -3,6 +3,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { removefromcart, updateQuantity } from "@/redux/slices/product";
 import { Product } from "@/types/product";
 import React, { useState } from "react";
+import { IoTrashBin } from "react-icons/io5";
 
 const Cart = ({ item }: { item: Product }) => {
   const dispatch = useAppDispatch();
@@ -10,37 +11,48 @@ const Cart = ({ item }: { item: Product }) => {
   return (
     <div className="row flex items-center pb-10 border-b   justify-between">
       <div className="col1 flex items-center   gap-4 md:w-60 ">
-        <img src={item.thumbnail} alt="productImage" className="w-20" />
-        <div className="space-y-1">
-          <h1 className="font-medium text-lg ">{item.title}</h1>
-          <h2 className="text-sm text-gray-400 font-semibold">
-            <span>Color : </span>
-            <span>Black</span>
-          </h2>
+        <div className="w-20 bg-gray-50">
+          <img
+            src={item.thumbnail}
+            alt="productImage"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <h1 className="font-medium text-lg " title={item.title}>
+            {item.title}
+          </h1>
+          <p title={item.description}>
+            {item.description.slice(0, 20) + "..."}
+          </p>
           <button
-            className="font-bold text-gray-500 "
+            className="font-bold pt-1 "
             onClick={() => {
               dispatch(removefromcart({ id: item._id }));
             }}
           >
-            Remove
+            <IoTrashBin size={25} />
           </button>
         </div>
       </div>
-      <div className="col2">
-        <div className="border mt-1 p-1 px-3 rounded-lg border-black flex gap-5 items-center w-fit ">
+      <div className="col2 ">
+        <div className="qty_controller flex items-center justify-center rounded-full  ">
           <button
+            className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
             onClick={() => {
               dispatch(updateQuantity({ id: item._id, type: "decrease" }));
-            }}
+            }} // Decrease quantity onClick
           >
             -
           </button>
-          <p className="font-medium ">{item.quantity}</p>
+          <p className="mx-1 rounded-lg  border-gray-600 border-[1px] px-3  ">
+            {item.quantity}
+          </p>
           <button
+            className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
             onClick={() => {
               dispatch(updateQuantity({ id: item._id, type: "increase" }));
-            }}
+            }} // Increase quantity onClick
           >
             +
           </button>

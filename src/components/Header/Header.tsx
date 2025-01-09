@@ -60,9 +60,11 @@ const Header = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const [latitude, setLatitude] = useState<number | null>(null);
+  const [error, seterror] = useState<string | null>(null);
+
   const [longitude, setLongitude] = useState<number | null>(null);
   const [City, setCity] = useState<any>(null);
-  const [Address, setAdress] = useState(null);
+  const [Address, setAdress] = useState<any>(null);
 
   // Using `latitude` and `longitude` to construct the query
   const Api_Key = "ff7490f29a564b46a2bedb035e511198";
@@ -84,6 +86,10 @@ const Header = () => {
       console.log(suburb, state_district, state, country);
       setCity(state_district);
       setAdress(`${suburb}, ${state_district}, ${state}, ${country}`);
+      setLocation({
+        city: state_district,
+        address: `${suburb}, ${state_district}, ${state}, ${country}`,
+      });
     } else {
       console.error("Location not found");
     }
@@ -103,12 +109,13 @@ const Header = () => {
           // Get location details after state updates
           getLocation(latitude, longitude);
 
-          document.querySelector(".messageoferror")!.innerHTML =
-            "Note! Press the button again in case of incorrect location";
+          seterror(
+            "Note! Press the button again in case of incorrect location"
+          );
 
           // Clear the error message after 5 seconds
           setTimeout(() => {
-            document.querySelector(".messageoferror")!.innerHTML = "";
+            seterror("");
           }, 5000);
         },
         (error) => {
@@ -131,6 +138,18 @@ const Header = () => {
     // Call findcurrentLocation when the component mounts
     findcurrentLocation();
   }, []); // Only run once on component mount
+  const [Location, setLocation] = useState({
+    city: "",
+    address: "",
+  });
+
+  function HandleInputChange(e: any) {
+    const { name, value } = e.target;
+    setLocation((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
 
   return (
     <div>
@@ -139,7 +158,7 @@ const Header = () => {
       ) : (
         <header className="absolute top-0 shadow-sm w-full bg-yellow-400 ">
           <div className="flex p-3 justify-between items-center px-10 mx-auto">
-            <div>
+            <div className=" lg:flex-[0.2] max-md:hidden">
               <Dialog>
                 <DialogTrigger>
                   <div
@@ -180,21 +199,27 @@ const Header = () => {
                       >
                         Use my Current Location
                       </button>
-                      <div className="messageoferror text-red-600 font-bold transition duration-900"></div>
+                      <div className="messageoferror text-red-600 font-bold transition duration-900">
+                        {error}
+                      </div>
                       <form
                         // onSubmit={onSubmit}
                         className="flex flex-col gap-2 w-full mt-3"
                       >
                         <input
                           type="text"
+                          name="city"
                           placeholder="City name here..."
-                          value={City ? `${City}` : ""}
+                          value={Location.city}
+                          onChange={HandleInputChange}
                           className="p-3 rounded-2xl bg-gray-50 outline-gray-200"
                         />
                         <input
                           type="text"
+                          name="address"
                           placeholder="Adress here..."
-                          value={Address ? `${Address}` : ""}
+                          value={Location.address}
+                          onChange={HandleInputChange}
                           className="p-3 rounded-2xl bg-gray-50 outline-gray-200"
                           required
                         />
@@ -209,7 +234,10 @@ const Header = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <Link href={"/"} className="font-bold text-2xl">
+            <Link
+              href={"/"}
+              className="font-bold  text-2xl flex-1 flex md:justify-center"
+            >
               <div className="w-16">
                 <img
                   src="https://plrhlsmmhmuutumibwez.supabase.co/storage/v1/object/public/pictures/logo.webp"
@@ -217,7 +245,7 @@ const Header = () => {
                 />
               </div>
             </Link>
-            <div className="flex gap-5 max-md:hidden items-center">
+            <div className="flex  flex-[0.2] justify-end  gap-5 max-md:hidden items-center">
               <div>
                 <Popover>
                   <PopoverTrigger>

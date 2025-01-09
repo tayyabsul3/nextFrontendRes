@@ -86,7 +86,7 @@ const productSlice = createSlice({
         state.cart.push(item);
       }
 
-      toast.success("Item added successfully\n id:" + item._id);
+      toast.success(item.title + "  added to Cart");
     },
     removefromcart: (state, action) => {
       const { id } = action.payload;
@@ -96,21 +96,23 @@ const productSlice = createSlice({
       console.log("Updated quantity");
       const { id, type } = action.payload;
       let ClonedItem = [...state.cart];
+
       ClonedItem = ClonedItem.map((item) => {
         if (item._id === id) {
-          return {
-            ...item,
-            quantity:
-              type === "increase"
-                ? item.quantity + 1
-                : item.quantity > 1
-                ? item.quantity - 1
-                : item.quantity,
-          };
+          if (type === "increase") {
+            return { ...item, quantity: item.quantity + 1 };
+          } else if (type === "decrease") {
+            if (item.quantity === 1) {
+              return null;
+            } else {
+              return { ...item, quantity: item.quantity - 1 };
+            }
+          }
         }
         return item;
       });
-      state.cart = ClonedItem;
+
+      state.cart = ClonedItem.filter((item) => item !== null);
     },
     updateProductData: (state, action) => {
       const { cart } = action.payload;

@@ -2,10 +2,11 @@
 import NewsLetter from "@/components/Home/NewsLetter";
 import ProductDetails from "@/components/Product/ProductDetails";
 import SubSection from "@/components/Product/SubSection";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import Loading from "./loading";
 
 const Page = ({ params }: any) => {
-  const { id } = params;
+  const { id } = use(params);
 
   const [data, setData] = useState<any>(null); // Initializing as null, to represent no data yet
 
@@ -30,7 +31,12 @@ const Page = ({ params }: any) => {
   }, [id]); // Adding `id` to dependencies to refetch data when the id changes
 
   // Show loading message until data is fetched
-  if (!data) return <div>Loading Product...</div>;
+  if (!data)
+    return (
+      <div className="min-h-50vh mt-40  max-w-7xl mx-auto  w-full">
+        <Loading />
+      </div>
+    );
   //   {
   //     "rating": 4,
   //     "comment": "Very satisfied!",
@@ -40,11 +46,11 @@ const Page = ({ params }: any) => {
   // }
   return (
     <div>
-      <div className="mx-auto max-w-7xl mt-20 max-2xl:px-10">
+      <div className="mx-auto max-w-7xl mt-20 max-md:px-5  max-2xl:px-10">
         <ProductDetails data={data} />
-        <SubSection data={data} />
+        {/* <SubSection data={data} /> */}
       </div>
-      <NewsLetter />
+      {/* <NewsLetter /> */}
     </div>
   );
 };

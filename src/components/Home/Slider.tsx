@@ -8,7 +8,7 @@ const Slider = () => {
   ];
 
   return (
-    <div className="max-w-[1900px] min-h-[20vh] mt-20 mb-10 mx-auto  p-2  flex justify-center pt-10 relative">
+    <div className="max-w-[1900px]  min-h-[20vh] 2xl:min-h-[50vh]  mt-20 mb-10 mx-auto  p-2  flex justify-center pt-10 relative">
       <div className=" md:max-w-[80%] rounded-lg">
         <Carousel>
           {imagesarray.map((s) => (

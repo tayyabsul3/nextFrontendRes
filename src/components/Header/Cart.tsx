@@ -129,7 +129,7 @@ const Cart = () => {
                     <div className="modify_item flex justify-between">
                       <div className="qty_controller flex items-center justify-center rounded-full  ">
                         <button
-                          className="subtract-button px-2  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
+                          className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
                           onClick={() => {
                             dispatch(
                               updateQuantity({ id: item._id, type: "decrease" })
@@ -138,11 +138,11 @@ const Cart = () => {
                         >
                           -
                         </button>
-                        <p className="mx-1 rounded-lg border-gray-600 border-[1px] px-3 ">
+                        <p className="mx-1 rounded-lg  border-gray-600 border-[1px] px-3  ">
                           {item.quantity}
                         </p>
                         <button
-                          className="add-button text-white  active:mt-[4px] px-2  bg-red-500 hover:bg-yellow-300   rounded-full "
+                          className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
                           onClick={() => {
                             dispatch(
                               updateQuantity({ id: item._id, type: "increase" })
@@ -183,9 +183,12 @@ const Cart = () => {
             </p>
           </div>
           <Link href={"/cart"}>
-            <button  onClick={() => {
-              dispatch(toogleShowCart({}));
-            }} className=" bg-red-600 text-sm w-full py-2 px-2  md:px-3 font-bold md:py-3 rounded-sm  text-white hover:bg-yellow-400 hover:text-black mt-1 mb-1  ">
+            <button
+              onClick={() => {
+                dispatch(toogleShowCart({}));
+              }}
+              className=" bg-red-600 text-sm w-full py-2 px-2  md:px-3 font-bold md:py-3 rounded-sm  text-white hover:bg-yellow-400 hover:text-black mt-1 mb-1  "
+            >
               Checkout
             </button>
           </Link>

@@ -16,7 +16,7 @@
 
 /* Style the scrollbar thumb (the draggable part of the scrollbar) */
 .customScroll::-webkit-scrollbar-thumb {
-  background: #888; /* Dark gray thumb */
+  background: #dfdede; /* Dark gray thumb */
   border-radius: 10px;
 }
 

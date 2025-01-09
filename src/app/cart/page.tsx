@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/components/Cart/CheckoutForm";
+import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
   throw new Error("Please provide a public key");
@@ -31,13 +33,12 @@ const page = () => {
   const [selectedOption, setSelectedOption] = useState("");
 
   const shippingOptions = [
-    { id: "freeShipping", label: "Free Shipping", price: 0 },
-    { id: "expressShipping", label: "Express Shipping", price: 19 },
+    { id: "cashDelivery", label: "Cash on Devlivery", price: 0 },
   ];
   const steps = [
-    { label: "Shopping cart", status: 1 },
-    { label: "Checkout details", status: 2 },
-    { label: "Complete order", status: 3 },
+    { label: "Cart", status: 1 },
+    { label: "Shipping and Devlivery", status: 2 },
+    { label: "Order", status: 3 },
   ];
   const handleRadioChange = (option: string) => {
     setSelectedOption(option);
@@ -182,14 +183,22 @@ const page = () => {
     }
   };
 
+  const [orderPlaced, setorderPlaced] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedOption === "") {
+      toast.error("Please select payment method");
+      return;
+    }
 
     const { phoneNumber, streetAddress, country, city, state } = formData;
     if (!streetAddress || !city || !state || !country || !phoneNumber) {
       toast.error("Please fill in all required fields.");
       return;
     }
+    setorderPlaced(true);
+
     const shippingPrice =
       shippingOptions.find((option) => option.id === selectedOption)?.price ||
       0;
@@ -222,9 +231,15 @@ const page = () => {
       })
     );
     localStorage.setItem("order", JSON.stringify(data));
-    setcompleted([0, 1]);
-    console.log(data);
-    setactiveOption(2);
+
+    setTimeout(() => {
+      setorderPlaced(false);
+      setcompleted([0, 1]);
+      console.log(data);
+      setactiveOption(2);
+      window.scrollTo(0, 0);
+      handleStartTimer();
+    }, 5000);
   };
 
   function convertSubcurrency(amount: number) {
@@ -237,10 +252,39 @@ const page = () => {
     );
     return cartTotal.toFixed(2);
   };
+  const [timeLeft, setTimeLeft] = useState(30); // Countdown timer (in seconds)
+  const [isCancelled, setIsCancelled] = useState(false); // To track order cancellation
+  const [timerStarted, setTimerStarted] = useState(false); // To check if timer has started
+
+  // Simulate Order ID and Address for this example
+  const orderId = "ORD123456";
+  const address = "1234 Main St, Some City, Some Country";
+
+  useEffect(() => {
+    // Start countdown timer when the component is mounted
+    if (timerStarted && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(timer); // Cleanup the interval on unmount
+    }
+  }, [timeLeft, timerStarted]);
+
+  const router = useRouter();
+  const handleCancelOrder = () => {
+    setIsCancelled(true);
+    setTimerStarted(false);
+    router.push("/account"); // Stop the timer
+  };
+
+  const handleStartTimer = () => {
+    setTimerStarted(true);
+  };
 
   return (
     <div>
-      <div className="mx-auto max-w-7xl mt-20 max-2xl:px-5">
+      <div className="mx-auto max-w-7xl mt-20 mb-40 max-2xl:px-5">
         <h1 className="my-40 mb-20 text-center text-5xl font-medium">Cart</h1>
         <div className="buttons max-lg:hidden flex justify-around my-10 ">
           {steps.map((step, i) => (
@@ -280,11 +324,13 @@ const page = () => {
              justify-between  py-5 border-black border-b "
               >
                 <h1 className="font-semibold text-lg md:w-60">Product</h1>
-                <h1 className="font-semibold text-lg w-auto">Quantity</h1>
-                <h1 className=" max-md:hidden font-semibold text-lg w-auto">
+                <h1 className="font-semibold text-lg w-auto md:mr-5 ">
+                  Quantity
+                </h1>
+                <h1 className=" max-md:hidden font-semibold text-lg w-auto md:mr-5 ">
                   Price
                 </h1>
-                <h1 className=" max-md:hidden font-semibold text-lg w-auto">
+                <h1 className=" max-md:hidden font-semibold text-lg w-auto md:mr-5">
                   Total
                 </h1>
               </div>
@@ -300,29 +346,7 @@ const page = () => {
               <h1 className="font-semibold text-lg md:text-2xl">
                 Cart summary
               </h1>
-              <div className="options space-y-5">
-                {shippingOptions.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`option flex justify-between px-2 md:px-5 md:py-3 p-2 md:text-lg gap-5 border rounded-md RS {
-                      selectedOption === option.id ? "bg-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex gap-5 items-center">
-                      <input
-                        type="radio"
-                        name="option"
-                        id={option.id}
-                        className="accent-yellow-400 scale-110 rounded-full"
-                        checked={selectedOption === option.id}
-                        onChange={() => handleRadioChange(option.id)}
-                      />
-                      <h2>{option.label}</h2>
-                    </div>
-                    <p>RS {option.price.toFixed(2)}</p>
-                  </div>
-                ))}
-              </div>
+
               <div className="amount space-y-2">
                 <div className="subtotal flex justify-between  border-b pb-5">
                   <p>Subtotal</p>
@@ -336,8 +360,8 @@ const page = () => {
               <button
                 onClick={() => {
                   if (activeOption === 0) {
-                    if (selectedOption === "") {
-                      toast("Please select an option for shipping");
+                    if (cart.length === 0) {
+                      toast.error("Cart is empty!");
                       return;
                     }
                     setactiveOption(1);
@@ -346,9 +370,9 @@ const page = () => {
                     });
                   }
                 }}
-                className="hover:bg-red-500 bg-yellow-400   text-white  p-3   opacity-100  transition-all duration-300 w-full  rounded-md px-5"
+                className="hover:bg-red-500 bg-yellow-400 text-black font-medium hover:text-white  p-3   opacity-100  transition-all duration-300 w-full  rounded-md px-5"
               >
-                Checkout
+                Review Payment and Address
               </button>
             </div>
           </div>
@@ -356,7 +380,7 @@ const page = () => {
           <div className="flex gap-5 md:gap-10 max-md:flex-col-reverse mb-20">
             <div className="OrderDetails flex-1 w-full space-y-10">
               <div className="customerDetails flex flex-col gap-5 border-2 border-black max-md:text-sm rounded-md p-5  md:p-10">
-                <h1 className="text-2xl font-medium">Shipping Address</h1>
+                <h1 className="text-2xl font-medium">Your Address</h1>
                 <div className="field flex flex-col gap-2  w-full">
                   <label
                     htmlFor="streetAddress"
@@ -461,7 +485,7 @@ const page = () => {
                 onClick={handleSubmit}
                 className="hover:bg-red-500 bg-yellow-400  text-white p-3 opacity-100 transition-all duration-300 w-full rounded-md hover:bg-black/90 px-5"
               >
-                Place Order
+                {orderPlaced ? "Loading..." : "Place Order"}
               </button>
             </div>
             <div className="card   border-2 flex flex-col gap-5 shadow-sm lg:min-w-[500px] max-md:w-full  rounded-lg  border-black p-10 h-fit">
@@ -480,11 +504,14 @@ const page = () => {
                         </p>
                       </div>
                       <div className="flex justify-between  w-full">
-                        <h2 className=" ">Color : Black</h2>
+                        <p title={cartItem.description}>
+                          {cartItem.description.slice(0, 20) + "..."}
+                        </p>
                         <p></p>
                       </div>
-                      <div className="border mt-1 p-1 px-3 rounded-lg border-black flex gap-5 items-center w-fit ">
+                      <div className="qty_controller mt-1  flex items-center justify-start rounded-full  ">
                         <button
+                          className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
                           onClick={() => {
                             dispatch(
                               updateQuantity({
@@ -492,12 +519,15 @@ const page = () => {
                                 type: "decrease",
                               })
                             );
-                          }}
+                          }} // Decrease quantity onClick
                         >
                           -
                         </button>
-                        <p className="font-medium ">{cartItem.quantity}</p>
+                        <p className="mx-1 rounded-lg  border-gray-600 border-[1px] px-3  ">
+                          {cartItem.quantity}
+                        </p>
                         <button
+                          className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
                           onClick={() => {
                             dispatch(
                               updateQuantity({
@@ -505,7 +535,7 @@ const page = () => {
                                 type: "increase",
                               })
                             );
-                          }}
+                          }} // Increase quantity onClick
                         >
                           +
                         </button>
@@ -514,23 +544,47 @@ const page = () => {
                   </div>
                 ))}
               </div>
+              <div className="options space-y-5">
+                <h1 className="font-medium text-xl">Payment method</h1>
+                {shippingOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className={`option flex justify-between px-2 md:px-5 md:py-3 p-2 md:text-lg gap-2 border rounded-md RS ${
+                      selectedOption === option.id ? "bg-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex gap-3 items-center text-sm ">
+                      <input
+                        type="radio"
+                        name="option"
+                        id={option.id}
+                        className="accent-yellow-400 mt-0.5  rounded-full"
+                        checked={selectedOption === option.id}
+                        onChange={() => handleRadioChange(option.id)}
+                      />
+                      <h2>{option.label}</h2>
+                    </div>
+                    {/* <p>RS {option.price.toFixed(2)}</p> */}
+                  </div>
+                ))}
+              </div>
               <div className="flex gap-2">
                 <input
                   type="text"
                   className=" border w-full  rounded-md p-2"
-                  placeholder="Input"
+                  placeholder="Enter Promo Code"
                 />
-                <button className="hover:bg-red-500 bg-yellow-400   text-white  p-3   opacity-100  transition-all duration-300 w-fit  rounded-md  px-5">
+                <button className="hover:bg-red-500 bg-yellow-400 text-white  p-2.5   opacity-100  transition-all duration-300 w-fit  rounded-md  px-5">
                   Apply
                 </button>
               </div>
               <div className="amount space-y-3">
-                <div className="subtotal flex justify-between  border-b pb-3">
-                  <p>Shipping</p>
+                {/* <div className="subtotal flex justify-between  border-b pb-3">
+                  {/* <p>Shipping</p>
                   <p className="font-semibold">
                     {selectedOption === "freeShipping" ? "Free" : "Deluxe"}
-                  </p>
-                </div>
+                  </p> 
+                </div> */}
                 <div className="subtotal flex justify-between  border-b pb-3">
                   <p>Subtotal</p>
                   <p className="font-semibold">RS {CalculateSubTotalPrice()}</p>
@@ -543,18 +597,56 @@ const page = () => {
             </div>
           </div>
         ) : (
-          <div className="p-20 shadow-2xl flex-col gap-2 flex justify-center items-center m-20 max-w-5xl mx-auto">
-            <h1>Your have to pay RS {CalculateTotalPrice()}</h1>
-            <Elements
-              stripe={stripPromise}
-              options={{
-                mode: "payment",
-                amount: convertSubcurrency(CalculateTotalPrice()),
-                currency: "usd",
-              }}
-            >
-              <CheckoutForm amount={CalculateTotalPrice()} />
-            </Elements>
+          <div className="p-20 max-lg:pt-5 shadow-sm flex-col gap-2 flex justify-center items-center m-20 max-w-5xl mx-auto">
+            <h1 className="font-semibold text-2xl mb-5 ">
+              Order as been Created Succesfully with Tracking ID
+              <span className="text-red-400 lowercase pl-2 hover:underline">
+                #{orderId}
+              </span>
+            </h1>
+            <div className="flex flex-col gap-5">
+              <div className="flex justify-between bg-gray-100 font-medium   rounded-lg p-6 ">
+                <div>
+                  <h1 className="text-lg "> Order Id :</h1>{" "}
+                  <p className="text-gray-500 pl-5">{orderId}</p>
+                </div>
+                <div className="p-3  rounded-full bg-green-400 text-white">
+                  <Check />
+                </div>
+              </div>
+              <div className="flex justify-between gap-10 items-center bg-gray-100 font-medium   rounded-lg p-6 ">
+                <div>
+                  <h1 className="text-lg ">Payment Method:</h1>{" "}
+                  <p className="text-gray-500 pl-5">Cash on Delivery</p>
+                </div>
+                <div className="p-3  rounded-full bg-green-400 text-white">
+                  <Check />
+                </div>
+              </div>
+              <div className="flex justify-between gap-10 items-center bg-gray-100 font-medium rounded-lg p-6 ">
+                <div>
+                  <h1 className="text-lg ">Delivery Address:</h1>{" "}
+                  <p className="text-gray-500 pl-5">{address}</p>
+                </div>
+                <div className="p-3  rounded-full bg-green-400 text-white">
+                  <Check />
+                </div>
+              </div>
+            </div>
+
+            {timerStarted && !isCancelled && (
+              <div className="bg-yellow-400 font-medium mt-2 flex gap-1 rounded-lg p-3 px-5 ">
+                <button
+                  onClick={handleCancelOrder}
+                  className="cancel-order-btn"
+                >
+                  Cancel Order
+                </button>
+                <p>{timeLeft}s</p>
+              </div>
+            )}
+
+            {isCancelled && <p>Your order has been canceled.</p>}
           </div>
         )}
       </div>
