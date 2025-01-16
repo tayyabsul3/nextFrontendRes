@@ -15,7 +15,7 @@ import {
 import Order from "@/components/Account/Admin/Order";
 import User from "@/components/Account/Admin/User";
 const page = () => {
-  const [activebtn, setactivebtn] = useState(0);
+  const [activebtn, setactivebtn] = useState(1);
   const [activebtnadmin, setactivebtnadmin] = useState<number>(10);
   const [Role, setRole] = useState("");
   const { user } = useAppSelector((state) => state.user);

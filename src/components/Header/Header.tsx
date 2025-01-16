@@ -37,12 +37,13 @@ const Header = () => {
   // Logout function
   async function logoutUser() {
     try {
-      const { data } = await axios.get("http://localhost:4000/users/logout", {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // const { data } = await axios.get("http://localhost:4000/users/logout", {
+      //   withCredentials: true,
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      localStorage.removeItem("uid#");
       toast.success("Logged out successfully");
       dispatch(Authenticate({ auth: false, user: {} }));
     } catch (error: any) {

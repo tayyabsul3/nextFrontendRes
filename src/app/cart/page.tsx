@@ -3,27 +3,25 @@ import Cart from "@/components/Cart/Cart";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { createOrder } from "@/redux/slices/order";
 import { updateQuantity, updateProductData } from "@/redux/slices/product";
-import { Product } from "@/types/product";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { BiCheck } from "react-icons/bi";
 import axios from "axios";
 import { toast } from "sonner";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "@/components/Cart/CheckoutForm";
+// import { loadStripe } from "@stripe/stripe-js";
+// import { Elements } from "@stripe/react-stripe-js";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getCookie } from "@/components/Reusables/Functions";
 
-if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
-  throw new Error("Please provide a public key");
-}
+// if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
+//   throw new Error("Please provide a public key");
+// }
 
-const stripPromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
+// const stripPromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const page = () => {
   const dispatch = useAppDispatch();
-  const [activeOption, setactiveOption] = useState<number>(0);
+  const [activeOption, setactiveOption] = useState<number>(1);
   const [completed, setcompleted] = useState<number[]>([]);
   const { cart } = useAppSelector((state) => state.product);
   const [cartItems, setcartItems] = useState(cart);
@@ -184,6 +182,25 @@ const page = () => {
   };
 
   const [orderPlaced, setorderPlaced] = useState(false);
+  function generateId() {
+    function generateRandomString(length: number) {
+      const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters[randomIndex];
+      }
+      return result;
+    }
+
+    const part1 = generateRandomString(5);
+    const part2 = generateRandomString(5);
+
+    return `${part1}-${part2}`;
+  }
+
+  // Example usage
+  const [orderID, setorderID] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,52 +216,32 @@ const page = () => {
     }
     setorderPlaced(true);
 
-    const shippingPrice =
-      shippingOptions.find((option) => option.id === selectedOption)?.price ||
-      0;
-
-    let items: any[] = [];
-
-    cart.forEach((item) => {
-      items.push({
-        product: item._id,
-        quantity: item.quantity,
-      });
-    });
+    // const shippingPrice =
+    //   shippingOptions.find((option) => option.id === selectedOption)?.price ||
+    //   0;
+    const orderid = generateId();
+    setorderID(orderid);
     const data = {
-      subtotal: CalculateSubTotalPrice(),
-      shipping: shippingPrice,
-      tax: 5.0,
-      totalPrice: CalculateTotalPrice(),
-      shippingInfo: {
-        address: streetAddress,
-        city,
-        state,
-        country,
-        phoneNo: phoneNumber,
-      },
-      orderItems: items,
+      branch_id: "test_Branch",
+      order: orderid,
+      date: new Date().toISOString().slice(0, 10),
+      time: new Date().toISOString().slice(11, 23),
+      address: streetAddress,
+      products: cart,
     };
+    createOrderBackend(data);
     dispatch(
       createOrder({
         data: data,
       })
     );
     localStorage.setItem("order", JSON.stringify(data));
-
-    setTimeout(() => {
-      setorderPlaced(false);
-      setcompleted([0, 1]);
-      console.log(data);
-      setactiveOption(2);
-      window.scrollTo(0, 0);
-      handleStartTimer();
-    }, 5000);
   };
 
   function convertSubcurrency(amount: number) {
     return Math.round(amount * 100);
   }
+
   const CalculateSubTotalPrice = () => {
     const cartTotal = cart.reduce(
       (acc, curr) => acc + curr.price * curr.quantity,
@@ -252,16 +249,11 @@ const page = () => {
     );
     return cartTotal.toFixed(2);
   };
+
   const [timeLeft, setTimeLeft] = useState(30); // Countdown timer (in seconds)
   const [isCancelled, setIsCancelled] = useState(false); // To track order cancellation
   const [timerStarted, setTimerStarted] = useState(false); // To check if timer has started
-
-  // Simulate Order ID and Address for this example
-  const orderId = "ORD123456";
-  const address = "1234 Main St, Some City, Some Country";
-
   useEffect(() => {
-    // Start countdown timer when the component is mounted
     if (timerStarted && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
@@ -281,6 +273,34 @@ const page = () => {
   const handleStartTimer = () => {
     setTimerStarted(true);
   };
+
+  function createOrderBackend(data: any) {
+    const d = {
+      data,
+      company: "Dassoft",
+      token: getCookie("uid#"),
+    };
+    try {
+      axios
+        .post("http://localhost:5000/userOrder/addOrder", d)
+        .then((res) => {
+          console.log("Response", res);
+          setorderPlaced(false);
+          setcompleted([0, 1]);
+          console.log(data);
+          setactiveOption(2);
+          window.scrollTo(0, 0);
+          handleStartTimer();
+          toast.success("Order has been created");
+        })
+        .catch((e) => console.log(e.response.data));
+    } catch (e: any) {
+      setorderPlaced(false);
+      window.scrollTo(0, 0);
+      console.error("Error:", e.response.data);
+      toast.error("Failed to create order");
+    }
+  }
 
   return (
     <div>
@@ -495,18 +515,18 @@ const page = () => {
               <div className="options space-y-5 mb-5">
                 {cartItems.map((cartItem, i) => (
                   <div className="flex gap-2 pb-5 border-b" key={i}>
-                    <img src={cartItem.thumbnail} alt="item" className="w-20" />
+                    <img src={cartItem.image} alt="item" className="w-20" />
                     <div className="flex flex-col gap-2 w-full">
                       <div className="flex justify-between font-bold w-full">
-                        <h2 className=" ">{cartItem.title}</h2>
+                        <h2 className=" ">{cartItem.name}</h2>
                         <p>
                           RS {(cartItem.price * cartItem.quantity).toFixed(2)}
                         </p>
                       </div>
                       <div className="flex justify-between  w-full">
-                        <p title={cartItem.description}>
+                        {/* <p title={cartItem.description}>
                           {cartItem.description.slice(0, 20) + "..."}
-                        </p>
+                        </p> */}
                         <p></p>
                       </div>
                       <div className="qty_controller mt-1  flex items-center justify-start rounded-full  ">
@@ -515,7 +535,7 @@ const page = () => {
                           onClick={() => {
                             dispatch(
                               updateQuantity({
-                                id: cartItem._id,
+                                id: cartItem.name,
                                 type: "decrease",
                               })
                             );
@@ -531,7 +551,7 @@ const page = () => {
                           onClick={() => {
                             dispatch(
                               updateQuantity({
-                                id: cartItem._id,
+                                id: cartItem.name,
                                 type: "increase",
                               })
                             );
@@ -601,14 +621,14 @@ const page = () => {
             <h1 className="font-semibold text-2xl mb-5 ">
               Order as been Created Succesfully with Tracking ID
               <span className="text-red-400 lowercase pl-2 hover:underline">
-                #{orderId}
+                #{orderID}
               </span>
             </h1>
             <div className="flex flex-col gap-5">
               <div className="flex justify-between bg-gray-100 font-medium   rounded-lg p-6 ">
                 <div>
                   <h1 className="text-lg "> Order Id :</h1>{" "}
-                  <p className="text-gray-500 pl-5">{orderId}</p>
+                  <p className="text-gray-500 pl-5">{orderID}</p>
                 </div>
                 <div className="p-3  rounded-full bg-green-400 text-white">
                   <Check />
@@ -626,7 +646,7 @@ const page = () => {
               <div className="flex justify-between gap-10 items-center bg-gray-100 font-medium rounded-lg p-6 ">
                 <div>
                   <h1 className="text-lg ">Delivery Address:</h1>{" "}
-                  <p className="text-gray-500 pl-5">{address}</p>
+                  <p className="text-gray-500 pl-5">{formData.streetAddress}</p>
                 </div>
                 <div className="p-3  rounded-full bg-green-400 text-white">
                   <Check />

@@ -6,12 +6,14 @@ import { Signup } from "@/redux/slices/user";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
+import { setCookie } from "@/components/Reusables/Functions";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    phone: "",
     termsAgreed: false,
   });
 
@@ -26,14 +28,16 @@ const SignupForm = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name, email, password, termsAgreed } = formData;
+    const { name, email, password, phone, termsAgreed } = formData;
     try {
       const response = await axios.post(
-        "http://localhost:4000/users/register",
+        "http://localhost:5000/auth/register",
         {
           name,
           email,
           password,
+          phone,
+          company: "Dassoft",
         },
         {
           withCredentials: true, // This ensures credentials (like cookies) are included in cross-origin requests
@@ -42,13 +46,14 @@ const SignupForm = () => {
           },
         }
       );
-      const { token, user } = response.data;
-
+      const { user } = response.data;
+      console.log("user ", user);
       dispatch(
         Signup({
           data: user,
         })
       );
+      setCookie("uid#", user.uid);
       toast.success("User LoggedIn " + user._id);
       router.push("/");
     } catch (error: any) {
@@ -57,6 +62,7 @@ const SignupForm = () => {
         name: "",
         email: "",
         password: "",
+        phone: "",
         termsAgreed: false,
       });
       toast.error(error.response.data.message);
@@ -80,6 +86,14 @@ const SignupForm = () => {
           placeholder="Your name"
           className="w-full border-b p-3 outline-none pl-0 "
           value={formData.name}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Your phone number"
+          className="w-full border-b p-3 outline-none pl-0 "
+          value={formData.phone}
           onChange={handleChange}
         />
 

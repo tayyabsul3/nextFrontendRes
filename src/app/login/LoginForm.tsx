@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
 import Forgotpassword from "../../components/Auth/Forgotpassword";
+import { setCookie } from "@/components/Reusables/Functions";
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
@@ -37,10 +38,11 @@ const LoginForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/users/login",
+        "http://localhost:5000/auth/login",
         {
           email: usernameOrEmail,
           password,
+          company: "Dassoft",
         },
         {
           withCredentials: true, // This ensures credentials (like cookies) are included in cross-origin requests
@@ -49,13 +51,14 @@ const LoginForm = () => {
           },
         }
       );
-      const { token, user } = response.data;
+      const { user } = response.data;
 
       dispatch(
         Login({
           data: user,
         })
       );
+      setCookie("uid#", user.uid);
       toast.success("User LoggedIn");
       router.push("/");
     } catch (error: any) {

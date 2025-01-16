@@ -5,7 +5,7 @@ import { Product } from "@/types/product";
 import React, { useState } from "react";
 import { IoTrashBin } from "react-icons/io5";
 
-const Cart = ({ item }: { item: Product }) => {
+const Cart = ({ item }: { item: any }) => {
   const dispatch = useAppDispatch();
 
   return (
@@ -13,22 +13,22 @@ const Cart = ({ item }: { item: Product }) => {
       <div className="col1 flex items-center   gap-4 md:w-60 ">
         <div className="w-20 bg-gray-50">
           <img
-            src={item.thumbnail}
+            src={item.image}
             alt="productImage"
             className="w-full h-full object-cover"
           />
         </div>
         <div className="flex flex-col gap-1">
-          <h1 className="font-medium text-lg " title={item.title}>
-            {item.title}
+          <h1 className="font-medium text-lg " title={item.name}>
+            {item.name}
           </h1>
-          <p title={item.description}>
+          {/* <p title={item.description}>
             {item.description.slice(0, 20) + "..."}
-          </p>
+          </p> */}
           <button
             className="font-bold pt-1 "
             onClick={() => {
-              dispatch(removefromcart({ id: item._id }));
+              dispatch(removefromcart({ id: item.name }));
             }}
           >
             <IoTrashBin size={25} />
@@ -40,7 +40,7 @@ const Cart = ({ item }: { item: Product }) => {
           <button
             className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
             onClick={() => {
-              dispatch(updateQuantity({ id: item._id, type: "decrease" }));
+              dispatch(updateQuantity({ id: item.name, type: "decrease" }));
             }} // Decrease quantity onClick
           >
             -
@@ -51,7 +51,7 @@ const Cart = ({ item }: { item: Product }) => {
           <button
             className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
             onClick={() => {
-              dispatch(updateQuantity({ id: item._id, type: "increase" }));
+              dispatch(updateQuantity({ id: item.name, type: "increase" }));
             }} // Increase quantity onClick
           >
             +

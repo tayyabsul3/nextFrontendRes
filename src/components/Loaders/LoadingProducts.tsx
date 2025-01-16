@@ -1,6 +1,7 @@
 import { Skeleton, SVGSkeleton } from "./Skeleton";
 
 const LoadingSkeleton = () => (
+  
   <>
     <div>
       <nav className="md:mt-2 flex justify-center items-center">

@@ -106,21 +106,21 @@ const Cart = () => {
         <div className="mt-5 flex flex-col gap-5 h-[75%] overflow-auto no_scrollbar">
           {cartItems &&
             cartItems.length > 0 &&
-            cartItems.map((item: Product, index: number) => (
+            cartItems.map((item: any, index: number) => (
               <div className="item flex p-2 border-b  gap-2" key={index}>
                 <div className="img w-[30%]">
                   <img
-                    src={item.thumbnail}
+                    src={item.image}
                     alt="Product"
                     className="w-[130px] rounded-md"
                   />
                 </div>
                 <div className="info flex flex-col justify-between w-full">
                   <div className="title">
-                    <h1 className="font-bold">{item.title}</h1>
-                    <p className="text-sm" title={item.description}>
+                    <h1 className="font-bold">{item.name}</h1>
+                    {/* <p className="text-sm" title={item.description}>
                       {LimitWords(item.description, 80)}
-                    </p>
+                    </p> */}
                   </div>
                   <div>
                     <p className="text-right my-1">
@@ -132,7 +132,10 @@ const Cart = () => {
                           className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
                           onClick={() => {
                             dispatch(
-                              updateQuantity({ id: item._id, type: "decrease" })
+                              updateQuantity({
+                                id: item.name,
+                                type: "decrease",
+                              })
                             );
                           }} // Decrease quantity onClick
                         >
@@ -145,7 +148,10 @@ const Cart = () => {
                           className="subtract-button  h-6 pb-1 w-6 flex justify-center items-center  text-white active:mt-[2px]  bg-red-500 hover:bg-yellow-300  rounded-full"
                           onClick={() => {
                             dispatch(
-                              updateQuantity({ id: item._id, type: "increase" })
+                              updateQuantity({
+                                id: item.name,
+                                type: "increase",
+                              })
                             );
                           }} // Increase quantity onClick
                         >
@@ -155,7 +161,7 @@ const Cart = () => {
                       <button
                         onClick={() => {
                           console.log(item);
-                          dispatch(removefromcart({ id: item._id }));
+                          dispatch(removefromcart({ id: item.name }));
                         }}
                       >
                         <IoTrashBin size={25} />

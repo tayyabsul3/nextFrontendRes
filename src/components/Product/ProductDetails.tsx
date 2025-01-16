@@ -16,14 +16,14 @@ const ProductDetails = ({ data: apidata }: any) => {
           <div className="pt-0.5 font-thin text-gray-400">
             <MdKeyboardArrowRight size={13} />
           </div>
-          <h1 className="text-yellow-400">{data.title}</h1>
+          <h1 className="text-yellow-400">{data.name}</h1>
         </div>
         <div className="prodt p-0 w-full md:p-4 lg:p-8 ">
           <div className="card bg-white w-full  max-w-[1500px] md:p-2 rounded-lg border-2  border-white    shadow-sm cursor-pointer mx-auto">
             <div className="flex py-6 flex-col lg:flex-row">
               <div className="image w-[60%] relative mb-4 mx-auto md:w-[40%] lg:p-10">
                 <img
-                  src={data.thumbnail}
+                  src={data.image}
                   alt="logo"
                   className="rounded-2xl w-full"
                 />
@@ -33,11 +33,11 @@ const ProductDetails = ({ data: apidata }: any) => {
                 <div>
                   <div>
                     <h1 className="font-bold text-3xl text-center lg:text-left">
-                      {data.title}
+                      {data.name}
                     </h1>
-                    <p className=" text-sm text-center lg:text-left mb-3">
+                    {/* <p className=" text-sm text-center lg:text-left mb-3">
                       {data.description}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="options">{data?.hasRange ? "" : ""}</div>
                 </div>

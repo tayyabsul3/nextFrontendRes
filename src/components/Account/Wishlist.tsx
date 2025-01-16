@@ -54,27 +54,19 @@ const Wishlist = () => {
                 <TableCell className="border-gray-400 text-sm flex items-center gap-4">
                   <button
                     onClick={() => {
-                      dispatch(removefromwishlist({ id: item._id }));
+                      dispatch(removefromwishlist({ id: item.name }));
                     }}
                     className="font-bold text-gray-500"
                   >
                     <CgClose />
                   </button>
-                  <img
-                    src={item.thumbnail}
-                    alt="productImage"
-                    className="w-20"
-                  />
+                  <img src={item.image} alt="productImage" className="w-20" />
                   <div className="space-y-1">
-                    <h1 className="font-medium text-lg">{item.title}</h1>
-                    <h2 className="text-sm text-gray-400 font-semibold">
-                      <span>Color : </span>
-                      <span>Black</span>
-                    </h2>
+                    <h1 className="font-medium text-lg">{item.name}</h1>
                   </div>
                 </TableCell>
                 <TableCell className="border-gray-400 text-sm">
-                  Rs {item.price.toFixed(2)}
+                  Rs {item.price}
                 </TableCell>
                 <TableCell className="border-gray-400 text-sm">
                   <button
@@ -102,26 +94,22 @@ const Wishlist = () => {
           <div key={i} className="border rounded-md p-4 shadow-md bg-white">
             <button
               onClick={() => {
-                dispatch(removefromwishlist({ id: item.id }));
+                dispatch(removefromwishlist({ id: item.name }));
               }}
               className="font-bold text-gray-500 absolute top-2 right-2"
             >
               <CgClose />
             </button>
             <img
-              src={item.thumbnail}
+              src={item.imag}
               alt="productImage"
               className="w-full h-40 object-cover"
             />
             <div className="space-y-1 mt-4">
-              <h1 className="font-medium text-lg">{item.title}</h1>
-              <h2 className="text-sm text-gray-400 font-semibold">
-                <span>Color: </span>
-                <span>Black</span>
-              </h2>
+              <h1 className="font-medium text-lg">{item.name}</h1>
             </div>
             <div className="mt-3 flex justify-between items-center">
-              <p className="font-semibold">${item.price.toFixed(2)}</p>
+              <p className="font-semibold">Rs {item.price}</p>
               <button className="bg-black text-white p-2 rounded-md hover:bg-black/90">
                 Add to Cart
               </button>
